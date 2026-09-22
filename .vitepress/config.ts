@@ -125,6 +125,11 @@ gtag('config', '${GA_MEASUREMENT_ID}');`,
         ariaLabel: "LinkedIn",
       },
       {
+        icon: "reddit",
+        link: "https://www.reddit.com/r/dStorage",
+        ariaLabel: "Reddit",
+      },
+      {
         icon: "github",
         link: "https://github.com/dStorageTech",
         ariaLabel: "GitHub",
