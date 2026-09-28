@@ -68,7 +68,7 @@ The one part of the adapter that does work in Node is `fromPublicKey()`: it only
 
 ```typescript
 new ArweaveBundlerStorageAdapter({
-  signingServerUrl: "https://dstorage.pro",
+  signingServerUrl: "https://portal.dstorage.pro",
   // Token format: <credential>.<base64url_modulus> — issued by the signing server.
   // The modulus (512 bytes, base64url) is the server's RSA-4096 public key and is
   // used to pin the expected signing key at construction time.

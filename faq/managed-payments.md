@@ -2,7 +2,7 @@
 
 ### What is dStorage Pro?
 
-dStorage Pro (`https://dstorage.pro`) is a managed service that handles storage and chain payment signing on behalf of applications. Instead of requiring every end-user to hold AR tokens and manage an Arweave JWK wallet, the service signs and submits transactions server-side. Developers sign up for an API auth token and configure the SDK to point at the service URL — no client-side wallet management required.
+dStorage Pro (`https://portal.dstorage.pro`) is a managed service that handles storage and chain payment signing on behalf of applications. Instead of requiring every end-user to hold AR tokens and manage an Arweave JWK wallet, the service signs and submits transactions server-side. Developers sign up for an API auth token and configure the SDK to point at the service URL — no client-side wallet management required.
 
 Delegating signing to a third-party service doesn't weaken the SDK's privacy model: encryption always happens on the user's device first, and the service only ever receives what it needs to construct and sign a transaction — never plaintext content, encryption keys, or (for Arweave uploads) the raw file bytes. See [What does the managed service see?](#what-does-the-managed-service-see) for the exact data sent per network.
 
@@ -12,16 +12,16 @@ Only a cryptographic hash of the content and the request metadata needed to cons
 
 ### What is the dStorage Pro portal?
 
-The dStorage Pro portal (`https://dstorage.pro`) is the web dashboard where customers manage the account behind the managed payment service — it's the human-facing counterpart to the `signingServerUrl`/`authToken` API the SDK talks to. Log in (Google OAuth, MetaMask/SIWE, Lace, or the 1AM wallet extension) and a customer account lets you:
+The dStorage Pro portal (`https://portal.dstorage.pro`) is the web dashboard where customers manage the account behind the managed payment service — it's the human-facing counterpart to the `signingServerUrl`/`authToken` API the SDK talks to. Log in with Lace, MetaMask (SIWE), or the 1AM wallet extension (Google sign-in is coming soon) and a customer account lets you:
 
-- **Fund a balance** via the Liquidity Manager, using a credit card or crypto (BTC, USDT, USDC, NIGHT, AR) — this prepaid balance is what the managed service deducts from on every signed transaction. Some free DUST is also credited to customers for Midnight fee sponsorship. [x402](#will-dstorage-pro-support-funding-accounts-via-x402) support for funding is planned.
+- **Fund a balance** via the Liquidity Manager, using a card, bank transfer, local payment methods, or a coupon — this prepaid balance is what the managed service deducts from on every signed transaction. Some free DUST is also credited to customers for Midnight fee sponsorship. [x402](#will-dstorage-pro-support-funding-accounts-via-x402) support for funding is planned.
 - **Create and manage API Tokens** — secret `ds_*` tokens for server-side use.
 - **Create and manage JWT Tokens** — scoped, revocable, ES256-signed tokens safe to embed in browser code.
 - **Monitor usage** on the Dashboard (request volume, success rate, liquidity consumed, network breakdown) and the Transaction History feed (service calls and payments, filterable, with status per entry).
 
 ### Will dStorage Pro support funding accounts via x402?
 
-Yes — x402 support is planned as an additional way to fund a dStorage Pro account balance. [x402](https://www.x402.org/) is an open, HTTP-native micropayment protocol (built around the HTTP 402 "Payment Required" status code) that lets a client pay for a resource or top up a balance with a stablecoin transfer as part of the HTTP request/response flow, without a traditional checkout page. See the [x402 specification](https://github.com/coinbase/x402) for the protocol details. This isn't available yet — see [Where do I get an auth token?](#where-do-i-get-an-auth-token) for the current status of dStorage Pro sign-up and funding methods.
+Yes — x402 support is planned as an additional way to fund a dStorage Pro account balance. [x402](https://www.x402.org/) is an open, HTTP-native micropayment protocol (built around the HTTP 402 "Payment Required" status code) that lets a client pay for a resource or top up a balance with a stablecoin transfer as part of the HTTP request/response flow, without a traditional checkout page. See the [x402 specification](https://github.com/coinbase/x402) for the protocol details. This isn't available yet — see [What is the dStorage Pro portal?](#what-is-the-dstorage-pro-portal) for the funding methods supported today.
 
 ### How do I configure the managed payment flow?
 
@@ -38,7 +38,7 @@ const sdk = new DStorage({
   storageAdapters: [
     new ArweaveBundlerStorageAdapter({
       signingServerUrl:
-        process.env.DSTORAGE_SERVICE_URL ?? "https://dstorage.pro",
+        process.env.DSTORAGE_SERVICE_URL ?? "https://portal.dstorage.pro",
       authToken: process.env.DSTORAGE_AUTH_TOKEN ?? "",
     }),
   ],
@@ -46,7 +46,7 @@ const sdk = new DStorage({
     new MidnightChainAdapter({
       // … chain config …
       signingServerUrl:
-        process.env.DSTORAGE_SERVICE_URL ?? "https://dstorage.pro",
+        process.env.DSTORAGE_SERVICE_URL ?? "https://portal.dstorage.pro",
       authToken: process.env.DSTORAGE_AUTH_TOKEN ?? "",
     }),
   ],
@@ -60,7 +60,7 @@ Both the storage adapter and the chain adapter accept `signingServerUrl` / `auth
 
 ### Where do I get an auth token?
 
-Sign up at [dstorage.pro](https://dstorage.pro) and obtain a **secret `ds_*` API token** via the portal UI (API Tokens tab) or `POST /api/tokens`. This is the standard credential, meant for server-side use only. Tokens use a compound format:
+Sign up at [portal.dstorage.pro](https://portal.dstorage.pro) and obtain a **secret `ds_*` API token** via the portal UI (API Tokens tab) or `POST /api/tokens`. This is the standard credential, meant for server-side use only. Tokens use a compound format:
 
 ```
 ds_<credential>.<base64url_modulus>
@@ -70,7 +70,7 @@ ds_<credential>.<base64url_modulus>
 
 ```typescript
 new ArweaveBundlerStorageAdapter({
-  signingServerUrl: "https://dstorage.pro",
+  signingServerUrl: "https://portal.dstorage.pro",
   authToken: process.env.DSTORAGE_AUTH_TOKEN ?? "",
 });
 ```
@@ -79,12 +79,12 @@ new ArweaveBundlerStorageAdapter({
 
 If you need to call the managed service directly from browser JavaScript, don't use a `ds_*` token — use a JWT token instead, see [What is a JWT token and why does the service support it?](#what-is-a-jwt-token-and-why-does-the-service-support-it) below.
 
-Sign-up is not yet open to the public. dStorage Pro will soon open registration for new users, letting them sign up and fund their accounts through a range of payment methods, including x402. Follow [@dStorageTech on X](https://x.com/dStorageTech) for updates.
+dStorage Pro is live and open to everyone: claim your Pro Pass at [portal.dstorage.pro](https://portal.dstorage.pro) by signing in with Lace, MetaMask, or 1AM, top up your balance, then generate a token from the dashboard. x402 funding is planned as well. Follow [@dStorageTech on X](https://x.com/dStorageTech) for updates.
 
 ### How do I set the credentials via environment variables?
 
 ```sh
-export DSTORAGE_SERVICE_URL=https://dstorage.pro
+export DSTORAGE_SERVICE_URL=https://portal.dstorage.pro
 export DSTORAGE_AUTH_TOKEN=ds_your_token_here
 ```
 
@@ -118,13 +118,13 @@ Today, use `MockStorageAdapter` and either `MockChainAdapter` or `MidnightSimula
 const sdk = new DStorage({
   storageAdapters: [
     new MockStorageAdapter({
-      signingServerUrl: "https://dstorage.pro",
+      signingServerUrl: "https://portal.dstorage.pro",
       authToken: process.env.DSTORAGE_AUTH_TOKEN ?? "",
     }),
   ],
   chainAdapters: [
     new MidnightSimulatorChainAdapter({
-      signingServerUrl: "https://dstorage.pro",
+      signingServerUrl: "https://portal.dstorage.pro",
       authToken: process.env.DSTORAGE_AUTH_TOKEN ?? "",
     }),
   ],
@@ -171,7 +171,7 @@ Use a JWT token in the SDK exactly the same way as a `ds_*` token — the `authT
 
 ```typescript
 new ArweaveBundlerStorageAdapter({
-  signingServerUrl: "https://dstorage.pro",
+  signingServerUrl: "https://portal.dstorage.pro",
   authToken: process.env.DSTORAGE_JWT_TOKEN ?? "",
 });
 ```

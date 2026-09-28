@@ -100,7 +100,7 @@ const sdk = new DStorage({
   storageAdapters: [
     new ArweaveBundlerStorageAdapter({
       signingServerUrl:
-        process.env.DSTORAGE_SERVICE_URL ?? "https://dstorage.pro",
+        process.env.DSTORAGE_SERVICE_URL ?? "https://portal.dstorage.pro",
       authToken: process.env.DSTORAGE_AUTH_TOKEN ?? "",
     }),
   ],

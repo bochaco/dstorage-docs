@@ -31,7 +31,7 @@ Your data is encrypted on-device, then (if a payment adapter is configured) the 
 
 ### Can dStorage operators read my data?
 
-No. Encryption happens on the user's device using keys derived locally. The managed payment service (`dstorage.pro`) only receives a cryptographic hash — never content. The storage network (currently Arweave) holds ciphertext. No party in the pipeline holds an unencrypted copy.
+No. Encryption happens on the user's device using keys derived locally. The managed payment service (`portal.dstorage.pro`) only receives a cryptographic hash — never content. The storage network (currently Arweave) holds ciphertext. No party in the pipeline holds an unencrypted copy.
 
 ### What is a `refId`?
 

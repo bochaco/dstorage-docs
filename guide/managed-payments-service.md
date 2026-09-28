@@ -20,11 +20,16 @@ changes:
   longer needs to hold any DUST
 - ~~arlocal~~ — not needed anymore; this guide uses real Arweave via dStorage Pro's bundler
   instead of a local test wallet
-- A dStorage Pro account and token — sign up at [dstorage.pro](https://dstorage.pro)
+- A dStorage Pro account with some credit — claim your Pro Pass at
+  [portal.dstorage.pro](https://portal.dstorage.pro)
 
 Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template) — its `src/main.ts` already has the Midnight Network Adapter guide's browser app wired up, so you can use it as the base for this guide's changes. Run `npm install && npm run dev` and open the printed local URL.
 
 ## Step 1 — Get a dStorage Pro API token
+
+Go to [portal.dstorage.pro](https://portal.dstorage.pro) and sign in with Lace, MetaMask, or 1AM
+(Google sign-in is coming soon). Top up your balance — by card, bank transfer, local payment
+methods, or a coupon — then create a token from the dashboard.
 
 Tokens come in two flavors:
 
@@ -36,7 +41,7 @@ Tokens come in two flavors:
   through your own Node.js backend rather than calling dStorage Pro directly from the browser;
   see the [full adapter reference](/faq/adapters#adapters) for that setup.
 
-Copy your JWT token from the dStorage Pro portal — you'll paste it directly into the adapter
+Create a JWT token in the portal's JWT Tokens tab and copy it — you'll paste it directly into the adapter
 config in Step 2.
 
 ## Step 2 — Add managed payments to your adapters
@@ -53,7 +58,7 @@ import {
   PasswordEncryptionAdapter,
 } from "@dstorage-tech/dstorage-sdk/browser";
 
-const signingServerUrl = "https://dstorage.pro";
+const signingServerUrl = "https://portal.dstorage.pro";
 const authToken = "your_jwt_token_here";
 
 const sdk = new DStorage({

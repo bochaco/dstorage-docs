@@ -34,5 +34,7 @@ features:
     details: Post-quantum-safe key wrapping — via ML-KEM768 keypairs, 24-word mnemonics, WebAuthn passkeys, or machine-generated passwords — protects against "harvest now, decrypt later" threats.
   - icon: 💳
     title: Managed payments
-    details: Fund your dStorage Pro account to cover Arweave storage and Midnight DUST fees on behalf of your users — no AR wallet or funded Midnight wallet required on their end.
+    details: Fund your dStorage Pro account to cover Arweave storage and Midnight DUST fees on behalf of your users — no AR wallet or funded Midnight wallet required on their end. dStorage Pro is live — claim your Pro Pass.
+    link: https://portal.dstorage.pro
+    linkText: Get dStorage Pro
 ---
