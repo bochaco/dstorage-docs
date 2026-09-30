@@ -61,7 +61,7 @@ cp -r node_modules/@dstorage-tech/dstorage-sdk/dist/contracts/dataregistry/manag
 ```
 
 This guide keeps `ArweaveLocalStorageAdapter` for storage, to isolate what changes on the chain
-side. Swapping in real Arweave storage is covered in [Managed Payments Service](/guide/managed-payments-service).
+side.
 
 ```typescript
 import {

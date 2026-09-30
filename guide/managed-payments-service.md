@@ -1,86 +1,73 @@
 # Managed Payments Service
 
-dStorage Pro is a hosted signing/payment service run by the dStorage team. It fronts Arweave
-storage costs and Midnight DUST chain fees on your behalf, billed to your dStorage Pro account
-instead of drawn from each end user's own wallet — access is authorized per-request via a token
-you configure once. This guide takes the [Midnight Network Adapter](/guide/midnight-network-adapter)
-guide's browser app and turns this service on for both the storage and chain sides, so your
-end users never need their own funded AR wallet or DUST-funded Midnight wallet.
+dStorage Pro is a hosted signing/payment service run by the dStorage team. It covers the network
+fees your app incurs across every supported network — Arweave storage costs and Midnight DUST
+chain fees alike — billed to your dStorage Pro account instead of drawn from each end user's own
+wallet, so your users never need a funded wallet on any of them. Access is authorized per-request
+via a token you configure once. It also offers a `TEST` sandbox, which runs the same payment flow
+against your account without spending real funds, so you can build and test your integration
+before going live.
+
+This guide takes the [Local & Simulator Adapters](/guide/local-simulator-adapters) script and
+routes its Arweave storage payment through dStorage Pro's `TEST` (sandbox) service. You get the
+full managed-payment round trip against your real dStorage Pro account, while uploads still go to
+your local arlocal instance and no real funds are spent.
 
 ## Prerequisites
 
-Everything from the [Midnight Network Adapter](/guide/midnight-network-adapter) guide, with two
-changes:
+Everything from the [Local & Simulator Adapters](/guide/local-simulator-adapters) guide, plus a
+dStorage Pro token:
 
-- Node.js 22 or later, to run the Vite dev server
-- Docker, to run the Midnight proof server
-- [1AM](https://1am.xyz) wallet extension (latest version) — or [Lace](https://www.lace.io),
-  or any other wallet implementing the dApp Connector API — switched to the Preprod
-  network — your wallet still connects to expose public keys and submit transactions, but it no
-  longer needs to hold any DUST
-- ~~arlocal~~ — not needed anymore; this guide uses real Arweave via dStorage Pro's bundler
-  instead of a local test wallet
-- A dStorage Pro account with some credit — claim your Pro Pass at
-  [portal.dstorage.pro](https://portal.dstorage.pro)
-
-Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template) — its `src/main.ts` already has the Midnight Network Adapter guide's browser app wired up, so you can use it as the base for this guide's changes. Run `npm install && npm run dev` and open the printed local URL.
+- Node.js 22 or later
+- [arlocal](https://github.com/textury/arlocal) running locally — see
+  [Step 1 of the Local & Simulator Adapters guide](/guide/local-simulator-adapters#step-1-—-start-arlocal)
+- A dStorage Pro account and API token from [portal.dstorage.pro](https://portal.dstorage.pro)
+Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template) and wire up this guide's adapters in minutes.
 
 ## Step 1 — Get a dStorage Pro API token
 
-Go to [portal.dstorage.pro](https://portal.dstorage.pro) and sign in with Lace, MetaMask, or 1AM
-(Google sign-in is coming soon). Top up your balance — by card, bank transfer, local payment
-methods, or a coupon — then create a token from the dashboard.
+Go to [portal.dstorage.pro](https://portal.dstorage.pro), sign in, and create a token from the
+dashboard. Copy it — you'll paste it into the adapter config in Step 2.
 
-Tokens come in two flavors:
+::: tip Free coupons
+Free coupons for the dStorage Pro service and its sandbox are regularly shared on our socials —
+[X](https://x.com/dStorageTech), [Reddit](https://www.reddit.com/r/dStorage), and
+[LinkedIn](https://www.linkedin.com/company/dstorage-tech) — like
+[this one](https://x.com/dStorageTech/status/2105119589810217410?s=20). Redeem them from the
+portal to top up your balance.
+:::
 
-- **JWT token** — scoped and safe to embed in a browser bundle. Its allowed origin, spend cap,
-  and request cap are baked into the signature, and it's instantly revocable from the portal.
-  This is what the rest of this guide uses.
-- **`ds_*` secret token** — full account access (manage other tokens, payment history). Server-side
-  only — never ship one in browser JavaScript. Use this instead if you're proxying requests
-  through your own Node.js backend rather than calling dStorage Pro directly from the browser;
-  see the [full adapter reference](/faq/adapters#adapters) for that setup.
+See the [Managed Payments FAQ](/faq/managed-payments#managed-payments-dstorage-pro) for the
+different token types and how to scope them.
 
-Create a JWT token in the portal's JWT Tokens tab and copy it — you'll paste it directly into the adapter
-config in Step 2.
+## Step 2 — Add managed payment to the storage adapter
 
-## Step 2 — Add managed payments to your adapters
-
-Starting from the same connector-mode chain adapter as the Midnight Network Adapter guide, two
-things change: the storage adapter swaps to `ArweaveBundlerStorageAdapter`, and both adapters get
-a `signingServerUrl`/`authToken`.
+Starting from the exact Step 2 config of the Local & Simulator Adapters guide, the only change is
+a `managedPayment` option passed to `ArweaveLocalStorageAdapter.createWithTestWallet()`:
 
 ```typescript
 import {
   DStorage,
-  ArweaveBundlerStorageAdapter,
-  MidnightChainAdapter,
+  ArweaveLocalStorageAdapter,
+  MidnightSimulatorChainAdapter,
   PasswordEncryptionAdapter,
-} from "@dstorage-tech/dstorage-sdk/browser";
+} from "@dstorage-tech/dstorage-sdk";
 
 const signingServerUrl = "https://portal.dstorage.pro";
-const authToken = "your_jwt_token_here";
+const authToken = "your_dstorage_pro_token_here"; // from portal.dstorage.pro
+
+const { adapter: storageAdapter } = await ArweaveLocalStorageAdapter.createWithTestWallet({
+  fundAr: 5, // amount of test AR to fund the generated wallet with
+  managedPayment: {
+    signingServerUrl,
+    authToken,
+    testMode: true,
+  },
+});
 
 const sdk = new DStorage({
-  storageAdapters: [
-    new ArweaveBundlerStorageAdapter({
-      signingServerUrl,
-      authToken,
-    }),
-  ],
-
-  chainAdapters: [
-    new MidnightChainAdapter({
-      walletMode: "connector",
-      connectorName: "1am",
-      zkConfigBaseUrl: window.location.origin,
-      network: "preprod",
-      proofServerEndpoint: "http://localhost:6300",
-      signingServerUrl,
-      authToken,
-    }),
-  ],
-
+  storageAdapters: [storageAdapter],
+  chainAdapters: [new MidnightSimulatorChainAdapter()],
   encryptionAdapters: [
     new PasswordEncryptionAdapter({
       password: "Correct-Horse-Battery!",
@@ -90,27 +77,20 @@ const sdk = new DStorage({
 });
 ```
 
-Adding `signingServerUrl`/`authToken` to `MidnightChainAdapter` manages DUST chain fees the same
-way it manages Arweave storage costs on `ArweaveBundlerStorageAdapter`. dStorage Pro balances and
-signs the on-chain transaction instead of the wallet.
+With `testMode: true`, each upload's payment request is sent to dStorage Pro with the `TEST`
+network identifier: dStorage Pro records it as a sandbox payment against your account, without
+spending any real funds.
 
-The wallet extension is still involved, though — it still connects, still exposes the public keys
-the ZK circuit needs, and still submits the final transaction. It just never needs a DUST balance
-to do any of that.
-
-The same separation of concerns applies on the storage side. `ArweaveBundlerStorageAdapter` never
-sends your content to dStorage Pro — not the raw data, and not even the encrypted bytes. dStorage
-Pro only pays for and signs the Arweave upload. The actual content, still encrypted, is submitted
-directly to the Arweave storage network afterwards, once payment is settled — it never passes
-through dStorage Pro at all.
+Your content never goes to dStorage Pro — not the raw data, and not even the encrypted bytes.
+Only the transaction metadata and its Merkle root (`data_root`) are sent for payment; the
+encrypted content is uploaded directly to arlocal afterwards.
 
 ## Step 3 — Init, store, retrieve
 
 Same call pattern as every other guide in this series:
 
 ```typescript
-const contractAddress = await sdk.init();
-console.log("DataRegistry contract address:", contractAddress);
+await sdk.init();
 
 const { chainRefId } = await sdk.store(
   new TextEncoder().encode("hello, dStorage"),
@@ -120,27 +100,16 @@ const { bytes } = await sdk.retrieveByRefId(chainRefId);
 console.log(new TextDecoder().decode(bytes)); // "hello, dStorage"
 ```
 
-What's different now that both sides are managed:
+What's different from the Local & Simulator Adapters guide:
 
-- **No AR wallet or JWK file needed client-side** — dStorage Pro holds a funded bundler account
-  and signs Arweave transactions on your behalf.
-- **No DUST-funded Midnight wallet needed either** — dStorage Pro balances and signs the
-  on-chain reference transaction too, covering the chain fee.
-- **Near-instant finality** on the storage side, via the ANS-104 bundler protocol, instead of
-  waiting on Arweave L1.
-- **Privacy is preserved on both sides** — for storage, only a 48-byte ANS-104 `deep_hash` is
-  sent to dStorage Pro; the file bytes themselves never leave the client. For chain, only the
-  already-proven Midnight transaction is sent for balancing and signing — thanks to the ZK proof,
-  that transaction reveals nothing about the private data it references, so no content or
-  witness data is ever sent to dStorage Pro for the DUST payment either.
+- **The storage payment goes through dStorage Pro** — each upload is quoted and recorded as a
+  `TEST` payment on your dStorage Pro account, so you can see it in the portal dashboard.
+- **Everything else is unchanged** — uploads still land in your local arlocal instance, and the
+  on-chain reference is still written by `MidnightSimulatorChainAdapter`.
 
 ## Learn More
 
-You've reached the end of the adapter progression — from fully in-memory Mock adapters, through
-local/simulator adapters, to a real Midnight network with fully managed Arweave and DUST
-payments. From here:
-
-- Browse the [FAQ](/faq/managed-payments#managed-payments-dstorage-pro) for the full managed-payments reference, including
-  token scoping and security notes.
-- The [full adapter reference](/faq/adapters#adapters) covers every adapter combination, including ones
-  not shown in these guides.
+- Browse the [FAQ](/faq/managed-payments#managed-payments-dstorage-pro) for the full
+  managed-payments reference, including token scoping and security notes.
+- Next: [Midnight Network Adapter](/guide/midnight-network-adapter) swaps the simulator for a real
+  Midnight network, a real wallet, and a live proof server.

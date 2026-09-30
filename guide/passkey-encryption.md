@@ -132,5 +132,3 @@ What's different about unlocking:
   so any one of them can unlock the same upload.
 - The [Encryption & Security FAQ](/faq/encryption-security#encryption-security) compares their
   post-quantum security tradeoffs.
-- Next: [Managed Payments Service](/guide/managed-payments-service), the final guide in this
-  series, covers production Arweave storage and Midnight DUST fees via dStorage Pro.

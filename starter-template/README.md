@@ -24,9 +24,10 @@ retrieves and decrypts it, and prints the result — no external services needed
 
 ## Following along with later guides
 
-Core Concepts and Local & Simulator Adapters keep using `src/index.ts` via `npm start` — each
-guide swaps in a different combination of adapters, but the overall shape of `main()` —
-configure, `init()`, `store()`, `retrieveByRefId()`, `destroy()` — stays the same.
+Core Concepts, Local & Simulator Adapters, and Managed Payments Service keep using
+`src/index.ts` via `npm start` — each guide swaps in a different combination of adapters, but
+the overall shape of `main()` — configure, `init()`, `store()`, `retrieveByRefId()`,
+`destroy()` — stays the same.
 
 [Midnight Network Adapter](https://dstorage.pro/docs/guide/midnight-network-adapter.html) runs
 in the browser instead, since it connects to a Midnight wallet extension (1AM by default, or Lace):
@@ -39,7 +40,3 @@ This copies the compiled `DataRegistry` contract's ZK artifacts into `public/`, 
 dev server, and opens a page (`index.html` + `src/main.ts`) with a **Run** button that walks
 through the same `init()` → `store()` → `retrieveByRefId()` sequence — see that guide's
 Prerequisites for the proof server, arlocal, and wallet setup it needs first.
-
-[Managed Payments Service](https://dstorage.pro/docs/guide/managed-payments-service.html) builds
-on the same `npm run dev` browser app, adding dStorage Pro's managed signing service so neither
-side needs a funded wallet.
