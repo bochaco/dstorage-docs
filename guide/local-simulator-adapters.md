@@ -110,4 +110,4 @@ What's different from Mock under the hood:
 
 - Browse the [FAQ](/faq/adapters#adapters) for the full adapter reference.
 - Next: [Managed Payments Service](/guide/managed-payments-service) routes this guide's storage
-  payments through dStorage Pro's `TEST` sandbox service.
+  and chain payments through dStorage Pro's `TEST` sandbox service.

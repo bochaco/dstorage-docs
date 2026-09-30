@@ -9,7 +9,7 @@ against your account without spending real funds, so you can build and test your
 before going live.
 
 This guide takes the [Local & Simulator Adapters](/guide/local-simulator-adapters) script and
-routes its Arweave storage payment through dStorage Pro's `TEST` (sandbox) service. You get the
+routes its storage and chain payments through dStorage Pro's `TEST` (sandbox) service. You get the
 full managed-payment round trip against your real dStorage Pro account, while uploads still go to
 your local arlocal instance and no real funds are spent.
 
@@ -22,6 +22,7 @@ dStorage Pro token:
 - [arlocal](https://github.com/textury/arlocal) running locally — see
   [Step 1 of the Local & Simulator Adapters guide](/guide/local-simulator-adapters#step-1-—-start-arlocal)
 - A dStorage Pro account and API token from [portal.dstorage.pro](https://portal.dstorage.pro)
+
 Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template) and wire up this guide's adapters in minutes.
 
 ## Step 1 — Get a dStorage Pro API token
@@ -40,10 +41,11 @@ portal to top up your balance.
 See the [Managed Payments FAQ](/faq/managed-payments#managed-payments-dstorage-pro) for the
 different token types and how to scope them.
 
-## Step 2 — Add managed payment to the storage adapter
+## Step 2 — Add managed payment to your adapters
 
 Starting from the exact Step 2 config of the Local & Simulator Adapters guide, the only change is
-a `managedPayment` option passed to `ArweaveLocalStorageAdapter.createWithTestWallet()`:
+a single `managedPayment` config object, passed to both
+`ArweaveLocalStorageAdapter.createWithTestWallet()` and `MidnightSimulatorChainAdapter`:
 
 ```typescript
 import {
@@ -53,21 +55,20 @@ import {
   PasswordEncryptionAdapter,
 } from "@dstorage-tech/dstorage-sdk";
 
-const signingServerUrl = "https://portal.dstorage.pro";
-const authToken = "your_dstorage_pro_token_here"; // from portal.dstorage.pro
+const managedPayment = {
+  signingServerUrl: "https://portal.dstorage.pro",
+  authToken: "your_dstorage_pro_token_here", // from portal.dstorage.pro
+  testMode: true,
+};
 
 const { adapter: storageAdapter } = await ArweaveLocalStorageAdapter.createWithTestWallet({
   fundAr: 5, // amount of test AR to fund the generated wallet with
-  managedPayment: {
-    signingServerUrl,
-    authToken,
-    testMode: true,
-  },
+  managedPayment,
 });
 
 const sdk = new DStorage({
   storageAdapters: [storageAdapter],
-  chainAdapters: [new MidnightSimulatorChainAdapter()],
+  chainAdapters: [new MidnightSimulatorChainAdapter({ managedPayment })],
   encryptionAdapters: [
     new PasswordEncryptionAdapter({
       password: "Correct-Horse-Battery!",
@@ -81,9 +82,16 @@ With `testMode: true`, each upload's payment request is sent to dStorage Pro wit
 network identifier: dStorage Pro records it as a sandbox payment against your account, without
 spending any real funds.
 
+Because the same `managedPayment` object is also passed to `MidnightSimulatorChainAdapter`, the
+on-chain reference write is paid through dStorage Pro's `TEST` sandbox too. Each `store()` call
+therefore records two sandbox payments — one for storage and one for the chain — just as a
+production setup has dStorage Pro cover both the Arweave and the Midnight fees. If you only want
+to route storage through dStorage Pro, leave `{ managedPayment }` off the chain adapter.
+
 Your content never goes to dStorage Pro — not the raw data, and not even the encrypted bytes.
-Only the transaction metadata and its Merkle root (`data_root`) are sent for payment; the
-encrypted content is uploaded directly to arlocal afterwards.
+The storage payment only sends the transaction metadata and its Merkle root (`data_root`), and the
+chain payment only sends a hash of the content; the encrypted content is uploaded directly to
+arlocal afterwards.
 
 ## Step 3 — Init, store, retrieve
 
@@ -102,10 +110,12 @@ console.log(new TextDecoder().decode(bytes)); // "hello, dStorage"
 
 What's different from the Local & Simulator Adapters guide:
 
-- **The storage payment goes through dStorage Pro** — each upload is quoted and recorded as a
-  `TEST` payment on your dStorage Pro account, so you can see it in the portal dashboard.
-- **Everything else is unchanged** — uploads still land in your local arlocal instance, and the
-  on-chain reference is still written by `MidnightSimulatorChainAdapter`.
+- **Both payments go through dStorage Pro** — the storage upload and the on-chain reference
+  write are each recorded as a `TEST` payment on your dStorage Pro account, so you can see them
+  in the portal dashboard.
+- **Storage and chain still run locally** — uploads still land in your local arlocal instance,
+  and the on-chain reference is still written by `MidnightSimulatorChainAdapter`; only their fees
+  now go through dStorage Pro.
 
 ## Learn More
 
