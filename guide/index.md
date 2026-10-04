@@ -6,8 +6,8 @@ adapter instead), while the core `init()` / `store()` / `retrieveByRefId()` call
 same throughout.
 
 Every guide can also be followed hands-on against a ready-to-run starter app instead of building
-from scratch — clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template)
-from this repo and swap in each guide's adapters as you go.
+from scratch — clone [`dstorage-starter-template`](https://github.com/dStorageTech/dstorage-starter-template)
+and swap in each guide's adapters as you go.
 
 - **[Mock Adapters](/guide/mock-adapters)** — fully in-memory, zero external dependencies. Your first encrypted upload and retrieval, in a few minutes.
 - **[Core Concepts](/guide/core-concepts)** — how your data gets encrypted, `storageId` vs `refId`, and how the three adapter slots compose. Conceptual, not hands-on — read this before or after Mock Adapters.

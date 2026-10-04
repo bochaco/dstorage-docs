@@ -17,7 +17,7 @@ Everything from the [Midnight Network Adapter](/guide/midnight-network-adapter) 
 - Served over HTTPS or `localhost` — a WebAuthn requirement, already satisfied by the Vite dev
   server the other guides use.
 
-Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template), run `npm install && npm run dev`, and open the printed local URL.
+Fast track: clone [`dstorage-starter-template`](https://github.com/dStorageTech/dstorage-starter-template), run `npm install && npm run dev`, and open the printed local URL.
 
 ## Step 1 — Register a passkey
 

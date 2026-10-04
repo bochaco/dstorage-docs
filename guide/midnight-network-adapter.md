@@ -18,7 +18,7 @@ and a real proof server. It's the first guide in this series that talks to live 
 - A Midnight wallet funded with DUST — for local development, request test tokens from the
   [Midnight Preprod Faucet](https://faucet.preprod.midnight.network/)
 
-Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template), run `npm install && npm run dev`, and open the printed local URL to see this guide running. The same project doubles as a boilerplate — keep building on `index.html` / `src/main.ts` for your own app instead of starting from scratch.
+Fast track: clone [`dstorage-starter-template`](https://github.com/dStorageTech/dstorage-starter-template), run `npm install && npm run dev`, and open the printed local URL to see this guide running. The same project doubles as a boilerplate — keep building on `index.html` / `src/main.ts` for your own app instead of starting from scratch.
 
 ## Step 1 — Start the Midnight proof server
 
@@ -52,7 +52,7 @@ docker stop $(docker ps -q --filter ancestor=midnightntwrk/proof-server:8.1.0)
 Connector mode fetches the compiled `DataRegistry` contract's ZK artifacts (`keys/` and `zkir/`)
 over HTTP from your app's own origin, instead of reading them from disk. Copy them from the
 installed SDK package into Vite's `public/` directory so they're served alongside your app
-(`starter-template`'s `npm run dev` does this for you automatically — see
+(`dstorage-starter-template`'s `npm run dev` does this for you automatically — see
 `scripts/copy-zk-artifacts.mjs`):
 
 ```sh

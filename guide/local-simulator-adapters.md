@@ -17,7 +17,7 @@ chain — so tests written against these adapters exercise realistic behavior.
 - No Midnight proof server, wallet extension, or DUST tokens needed —
   `MidnightSimulatorChainAdapter` runs the real `DataRegistry` circuits in-process
 
-Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template) and wire up this guide's adapters in minutes.
+Fast track: clone [`dstorage-starter-template`](https://github.com/dStorageTech/dstorage-starter-template) and wire up this guide's adapters in minutes.
 
 ## Step 1 — Start arlocal
 

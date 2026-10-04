@@ -105,5 +105,5 @@ compiled ZK artifacts (prover/verifier keys and ZKIR) ship inside the
     "dist/contracts/dataregistry/managed",
   );
   ```
-- **Browser**: copy `keys/` and `zkir/` from `node_modules/@dstorage-tech/dstorage-sdk/dist/contracts/dataregistry/managed/` into your application's public assets directory, then pass `zkConfigBaseUrl: window.location.origin`. Artifacts are fetched over HTTP. (The [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template)'s `npm run dev` does this automatically — see `scripts/copy-zk-artifacts.mjs`.)
+- **Browser**: copy `keys/` and `zkir/` from `node_modules/@dstorage-tech/dstorage-sdk/dist/contracts/dataregistry/managed/` into your application's public assets directory, then pass `zkConfigBaseUrl: window.location.origin`. Artifacts are fetched over HTTP. (The [`dstorage-starter-template`](https://github.com/dStorageTech/dstorage-starter-template)'s `npm run dev` does this automatically — see `scripts/copy-zk-artifacts.mjs`.)
 

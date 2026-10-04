@@ -23,7 +23,7 @@ dStorage Pro token:
   [Step 1 of the Local & Simulator Adapters guide](/guide/local-simulator-adapters#step-1-—-start-arlocal)
 - A dStorage Pro account and API token from [portal.dstorage.pro](https://portal.dstorage.pro)
 
-Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template) and wire up this guide's adapters in minutes.
+Fast track: clone [`dstorage-starter-template`](https://github.com/dStorageTech/dstorage-starter-template) and wire up this guide's adapters in minutes.
 
 ## Step 1 — Get a dStorage Pro API token
 

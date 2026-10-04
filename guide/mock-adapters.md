@@ -12,7 +12,7 @@ network calls.
 
 That's it — Mock adapters need no wallet extensions, no proof server, and no tokens.
 
-Fast track: clone [`starter-template`](https://github.com/dStorageTech/dstorage-docs/tree/main/starter-template) and wire up this guide's adapters in minutes.
+Fast track: clone [`dstorage-starter-template`](https://github.com/dStorageTech/dstorage-starter-template) and wire up this guide's adapters in minutes.
 
 ## Install
 
